@@ -25,18 +25,6 @@ To run the project, you need the following dependencies:
   - `petfinder_test.csv`: The test dataset.
   Ensure these files are placed in a `data` directory relative to the notebook.
 
-## Installation
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd <repository-directory>
-   ```
-2. Install the required Python packages:
-   ```bash
-   pip install pandas numpy scikit-learn tensorflow category_encoders
-   ```
-3. Ensure the `petfinder_train.csv` and `petfinder_test.csv` files are in the `data` directory.
-
 ## Usage
 The project is executed within the `new_home.ipynb` Jupyter Notebook. Below is an overview of the workflow:
 
@@ -82,60 +70,6 @@ The neural network is built using **Keras** with the following architecture:
 - Probabilities are converted to binary values (`True`/`False`) using a threshold of 0.5.
 - The predictions are saved in a `submission.csv` file with a single `Target` column.
 
-### Running the Notebook
-To execute the project:
-1. Open `new_home.ipynb` in Jupyter Notebook or JupyterLab.
-2. Ensure the required libraries are installed and the input files are in the `data` directory.
-3. Run all cells in the notebook to perform preprocessing, model training, and prediction.
-4. The final output (`submission.csv`) will be generated, along with `test.csv` and `model_info.json`.
-
-### Generating the Submission File
-The notebook includes a cell to create a `result.zip` file containing:
-- `submission.csv`: Predictions for the test dataset.
-- `test.csv`: Preprocessed test dataset.
-- `model_info.json`: Model architecture details.
-- `new_home.ipynb`: The complete notebook.
-
-Run the final cell to generate `result.zip`:
-```python
-import zipfile
-import json
-import os
-
-# Save the notebook
-if not os.path.exists(os.path.join(os.getcwd(), 'new_home.ipynb')):
-    %notebook -e new_home.ipynb
-
-# Save test dataset
-test.to_csv("test.csv")
-
-# Save model architecture
-model_info = []
-for layer in model.layers:
-    if layer.__class__.__name__ == "Dense":
-        model_info.append({
-            "name": layer.__class__.__name__,
-            "units": layer.units,
-            "activation": layer.get_config()["activation"]
-        })
-    else:
-        model_info.append({"name": layer.__class__.__name__})
-with open("model_info.json", "w") as f:
-    json.dump(model_info, f)
-
-# Compress files
-def compress(file_names):
-    print("File Paths:")
-    print(file_names)
-    compression = zipfile.ZIP_DEFLATED
-    with zipfile.ZipFile("result.zip", mode="w") as zf:
-        for file_name in file_names:
-            zf.write('./' + file_name, file_name, compress_type=compression)
-
-submission.to_csv('submission.csv', index=False)
-file_names = ["test.csv", 'submission.csv', 'model_info.json', 'new_home.ipynb']
-compress(file_names)
-```
 
 ## Evaluation
 The model's performance is evaluated using the **F1 score** with the `"weighted"` averaging method, as implemented in **scikit-learn**. The target is to achieve an F1 score of at least 70 to meet the project's requirements.
@@ -148,9 +82,3 @@ The model's performance is evaluated using the **F1 score** with the `"weighted"
 - The `Description` column is excluded from the analysis as text processing is not covered in this project.
 - Preprocessing steps (e.g., normalization, encoding) are applied consistently to both training and test datasets to ensure compatibility.
 - The model architecture is relatively large (5.6M parameters), which may lead to overfitting on smaller datasets. Future improvements could include adding regularization (e.g., dropout) or tuning hyperparameters.
-
-## Contributing
-Contributions are welcome! Please submit a pull request or open an issue to discuss improvements or bug fixes.
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
